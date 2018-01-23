@@ -273,3 +273,111 @@ jobs:
     always:
       script:
         - echo "This should always be executed, regardless of job status"
+
+  ####################################################################
+  # Configuration options for hybrid jobs i.e. jobs having tasks on both
+  # container and the host
+  ####################################################################
+  ## Job description:
+  ## - single task on both container and host, container being default
+  - name: hybrid_default_container
+    type: runSh
+    steps:
+      - TASK:
+          name: check_container_OS
+          script:
+            - echo "Checking OS of the container"
+            - uname -a
+            - cat /etc/*release
+      - TASK:
+          name: check_host_OS
+          runtime:
+            container: false
+          script:
+            - echo "Checking OS of the host"
+            - uname -a
+            - cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - single task on both container and host, host being default
+  - name: hybrid_default_container
+    type: runSh
+    runtime:
+      container: false
+    steps:
+      - TASK:
+          name: check_container_OS
+          runtime:
+            container: true
+          script:
+            - echo "Checking OS of the container"
+            - uname -a
+            - cat /etc/*release
+      - TASK:
+          name: check_host_OS
+          script:
+            - echo "Checking OS of the host"
+            - uname -a
+            - cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - single task on both container and host, sharing state
+  - name: hybrid_share_task_state
+    type: runSh
+    runtime:
+      container: false
+    steps:
+      - TASK:
+          name: container_write_file
+          runtime:
+            container: true
+          script:
+            - echo "write to shared file from a container"
+            - uname -a
+            - cat /etc/*release
+            - echo "Writing data to a file in shared directory"
+            - echo "CUSTOM_VALUE" > $SHARED_DIR/sharedFile.txt
+      - TASK:
+          name: host_override_file
+          script:
+            - echo "Checking OS of the host"
+            - uname -a
+            - cat /etc/*release
+            - echo "Reading data from file in shared directory"
+            - echo $SHARED_DIR/sharedFile.txt
+            - echo "Overriding file data"
+            - echo "OVERRIDEN_VALUE" > $SHARED_DIR/sharedFile.txt
+      - TASK:
+          name: container_check_contents
+          runtime:
+            container: true
+          script:
+            - echo "Checking shared file contents"
+            - echo $SHARED_DIR/sharedFile.txt
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
