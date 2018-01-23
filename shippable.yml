@@ -81,7 +81,7 @@ jobs:
           name: check_contents
           script:
             - echo "Checking shared file contents"
-            - echo $SHARED_DIR/sharedFile.txt
+            - cat $SHARED_DIR/sharedFile.txt
     on_success:
       script:
         - echo "Task successfully completed"
@@ -235,7 +235,7 @@ jobs:
           name: check_contents
           script:
             - echo "Checking shared file contents"
-            - echo $SHARED_DIR/sharedFile.txt
+            - cat $SHARED_DIR/sharedFile.txt
     on_success:
       script:
         - echo "Task successfully completed"
@@ -362,7 +362,7 @@ jobs:
             - uname -a
             - cat /etc/*release
             - echo "Reading data from file in shared directory"
-            - echo $SHARED_DIR/sharedFile.txt
+            - cat $SHARED_DIR/sharedFile.txt
             - echo "Overriding file data"
             - echo "OVERRIDEN_VALUE" > $SHARED_DIR/sharedFile.txt
       - TASK:
@@ -371,7 +371,7 @@ jobs:
             container: true
           script:
             - echo "Checking shared file contents"
-            - echo $SHARED_DIR/sharedFile.txt
+            - cat $SHARED_DIR/sharedFile.txt
     on_success:
       script:
         - echo "Task successfully completed"
