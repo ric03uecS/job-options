@@ -81,7 +81,7 @@ jobs:
           name: check_contents
           script:
             - echo "Checking shared file contents"
-            - echo $SHARED_DIR/sharedFile.txt
+            - cat $SHARED_DIR/sharedFile.txt
     on_success:
       script:
         - echo "Task successfully completed"
@@ -235,7 +235,7 @@ jobs:
           name: check_contents
           script:
             - echo "Checking shared file contents"
-            - echo $SHARED_DIR/sharedFile.txt
+            - cat $SHARED_DIR/sharedFile.txt
     on_success:
       script:
         - echo "Task successfully completed"
