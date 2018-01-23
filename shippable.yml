@@ -1,0 +1,155 @@
+resources:
+  - name: global_state
+    type: state
+
+jobs:
+
+  ## Job description:
+  ## - default runtime
+  ## - single task
+  - name: single_task
+    type: runSh
+    steps:
+      - TASK:
+          name: check_container_OS
+          script:
+            - echo "Checking OS of the container"
+            - uname -a
+            - cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - default runtime
+  ## - multiple tasks
+  - name: multiple_tasks
+    type: runSh
+    steps:
+      - TASK:
+          name: check_container_OS
+          script:
+            - echo "Checking OS of the container"
+            - uname -a
+            - cat /etc/*release
+      - TASK:
+          name: check_images
+          script:
+            - echo "Checking available docker images"
+            - sudo docker images
+      - TASK:
+          name: check_container_uptime
+          script:
+            - echo "Checking container uptime"
+            - uptime
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - default runtime
+  ## - multiple tasks
+  ## - shared task directory
+  - name: share_task_state
+    type: runSh
+    steps:
+      - TASK:
+          name: write_to_file
+          script:
+            - echo "Writing data to a file in shared directory"
+            - echo "CUSTOM_VALUE" > $SHARED_DIR/sharedFile.txt
+      - TASK:
+          name: override_file
+          script:
+            - echo "Reading data from file in shared directory"
+            - echo $SHARED_DIR/sharedFile.txt
+            - echo "Overriding file data"
+            - echo "OVERRIDEN_VALUE" > $SHARED_DIR/sharedFile.txt
+      - TASK:
+          name: check_contents
+          script:
+            - echo "Checking shared file contents"
+            - echo $SHARED_DIR/sharedFile.txt
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - default runtime
+  ## - single task
+  ## - custom image to run the job
+  - name: custom_image
+    type: runSh
+    steps:
+      - TASK:
+          name: custom_container_opts
+          runtime:
+            options:
+              imageName: drydock/u14pytall
+              imageTag: master
+          script:
+            - echo "Checking runtime values"
+            - sudo docker info
+            - sudo docker images
+            - sudo docker ps -a
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - default runtime
+  ## - single task
+  ## - custom image options to run the job
+  - name: custom_opts
+    type: runSh
+    steps:
+      - TASK:
+          name: custom_container_opts
+          runtime:
+            options:
+              env:
+                - CONTAINER_ENV_1: foo
+                - CONTAINER_ENV_2: bar
+              imageName: drydock/u14pytall
+              imageTag: master
+              options: --dns=4.4.4.4 --dns=8.8.8.8
+          script:
+            - echo "Checking runtime values"
+            - sudo docker info
+            - sudo docker images
+            - sudo docker ps -a
+            - echo "Checking environment variables"
+            - env
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
