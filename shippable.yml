@@ -4,10 +4,12 @@ resources:
 
 jobs:
 
+  ####################################################################
+  # Configuration options for jobs running on default runtime (container)
+  ####################################################################
   ## Job description:
-  ## - default runtime
   ## - single task
-  - name: single_task
+  - name: container_single_task
     type: runSh
     steps:
       - TASK:
@@ -27,9 +29,8 @@ jobs:
         - echo "This should always be executed, regardless of job status"
 
   ## Job description:
-  ## - default runtime
   ## - multiple tasks
-  - name: multiple_tasks
+  - name: container_multiple_tasks
     type: runSh
     steps:
       - TASK:
@@ -59,10 +60,9 @@ jobs:
         - echo "This should always be executed, regardless of job status"
 
   ## Job description:
-  ## - default runtime
   ## - multiple tasks
   ## - shared task directory
-  - name: share_task_state
+  - name: container_share_task_state
     type: runSh
     steps:
       - TASK:
@@ -93,10 +93,9 @@ jobs:
         - echo "This should always be executed, regardless of job status"
 
   ## Job description:
-  ## - default runtime
   ## - single task
   ## - custom image to run the job
-  - name: custom_image
+  - name: container_custom_image
     type: runSh
     steps:
       - TASK:
@@ -121,10 +120,9 @@ jobs:
         - echo "This should always be executed, regardless of job status"
 
   ## Job description:
-  ## - default runtime
   ## - single task
   ## - custom image options to run the job
-  - name: custom_opts
+  - name: container_custom_opts
     type: runSh
     steps:
       - TASK:
@@ -144,6 +142,128 @@ jobs:
             - sudo docker ps -a
             - echo "Checking environment variables"
             - env
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ####################################################################
+  # Configuration options for jobs running on host
+  ####################################################################
+  ## Job description:
+  ## - single task
+  - name: host_single_task
+    type: runSh
+    runtime:
+      container: false
+    steps:
+      - TASK:
+          name: check_host_OS
+          script:
+            - echo "Checking OS of the host"
+            - uname -a
+            - cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - multiple tasks
+  - name: host_multiple_tasks
+    type: runSh
+    runtime:
+      container: false
+    steps:
+      - TASK:
+          name: check_host_OS
+          script:
+            - echo "Checking OS of the host"
+            - uname -a
+            - cat /etc/*release
+      - TASK:
+          name: check_images
+          script:
+            - echo "Checking available docker images"
+            - sudo docker images
+      - TASK:
+          name: check_host_uptime
+          script:
+            - echo "Checking host uptime"
+            - uptime
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - multiple tasks
+  ## - shared task directory
+  - name: host_share_task_state
+    type: runSh
+    runtime:
+      container: false
+    steps:
+      - TASK:
+          name: write_to_file
+          script:
+            - echo "Writing data to a file in shared directory"
+            - echo "CUSTOM_VALUE" > $SHARED_DIR/sharedFile.txt
+      - TASK:
+          name: override_file
+          script:
+            - echo "Reading data from file in shared directory"
+            - echo $SHARED_DIR/sharedFile.txt
+            - echo "Overriding file data"
+            - echo "OVERRIDEN_VALUE" > $SHARED_DIR/sharedFile.txt
+      - TASK:
+          name: check_contents
+          script:
+            - echo "Checking shared file contents"
+            - echo $SHARED_DIR/sharedFile.txt
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - single task
+  ## - custom image to run the job
+  - name: host_custom_envs
+    type: runSh
+    runtime:
+      container: false
+    steps:
+      - TASK:
+          name: host_custom_envs
+          runtime:
+            options:
+              env:
+                - HOST_ENV_1: foo
+                - HOST_ENV_2: bar
+          script:
+            - echo "Checking runtime values"
+            - env | grep HOST
     on_success:
       script:
         - echo "Task successfully completed"
