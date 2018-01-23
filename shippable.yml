@@ -309,7 +309,7 @@ jobs:
 
   ## Job description:
   ## - single task on both container and host, host being default
-  - name: hybrid_default_container
+  - name: hybrid_default_host
     type: runSh
     runtime:
       container: false
