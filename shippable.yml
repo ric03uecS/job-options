@@ -354,6 +354,7 @@ jobs:
             - uname -a
             - cat /etc/*release
             - echo "Writing data to a file in shared directory"
+            - sleep 10
             - echo "CUSTOM_VALUE" > $SHARED_DIR/sharedFile.txt
       - TASK:
           name: host_override_file
@@ -364,6 +365,7 @@ jobs:
             - echo "Reading data from file in shared directory"
             - cat $SHARED_DIR/sharedFile.txt
             - echo "Overriding file data"
+            - sleep 10
             - echo "OVERRIDEN_VALUE" > $SHARED_DIR/sharedFile.txt
       - TASK:
           name: container_check_contents
@@ -371,6 +373,7 @@ jobs:
             container: true
           script:
             - echo "Checking shared file contents"
+            - sleep 10
             - cat $SHARED_DIR/sharedFile.txt
     on_success:
       script:
