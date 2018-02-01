@@ -3,6 +3,13 @@ resources:
     type: state
 
 jobs:
+  - name: trigger_tests
+    type: runSh
+    steps:
+      - TASK:
+          name: trigger_tests
+          script:
+            - echo "Triggering all downstream runSH test"
 
   ####################################################################
   # Configuration options for jobs running on default runtime (container)
@@ -12,6 +19,7 @@ jobs:
   - name: container_single_task
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: check_container_OS
           script:
@@ -33,6 +41,7 @@ jobs:
   - name: container_multiple_tasks
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: check_container_OS
           script:
@@ -65,6 +74,7 @@ jobs:
   - name: container_share_task_state
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: write_to_file
           script:
@@ -98,6 +108,7 @@ jobs:
   - name: container_custom_image
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: custom_container_opts
           runtime:
@@ -125,6 +136,7 @@ jobs:
   - name: container_custom_opts
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: custom_container_opts
           runtime:
@@ -162,6 +174,7 @@ jobs:
     runtime:
       container: false
     steps:
+      - IN: trigger_tests
       - TASK:
           name: check_host_OS
           script:
@@ -185,6 +198,7 @@ jobs:
     runtime:
       container: false
     steps:
+      - IN: trigger_tests
       - TASK:
           name: check_host_OS
           script:
@@ -219,6 +233,7 @@ jobs:
     runtime:
       container: false
     steps:
+      - IN: trigger_tests
       - TASK:
           name: write_to_file
           script:
@@ -254,6 +269,7 @@ jobs:
     runtime:
       container: false
     steps:
+      - IN: trigger_tests
       - TASK:
           name: host_custom_envs
           runtime:
@@ -283,6 +299,7 @@ jobs:
   - name: hybrid_default_container
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: check_container_OS
           script:
@@ -314,6 +331,7 @@ jobs:
     runtime:
       container: false
     steps:
+      - IN: trigger_tests
       - TASK:
           name: check_container_OS
           runtime:
@@ -345,6 +363,7 @@ jobs:
     runtime:
       container: false
     steps:
+      - IN: trigger_tests
       - TASK:
           name: container_write_file
           runtime:
@@ -390,6 +409,7 @@ jobs:
   - name: multi_line_script_success
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: multi_line_script
           script: |
@@ -412,6 +432,7 @@ jobs:
   - name: single_line_script
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: single_line_script
           script: >
@@ -433,6 +454,7 @@ jobs:
   - name: multi_line_script_failure
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: multi_line_script
           script: |
@@ -455,6 +477,7 @@ jobs:
   - name: exit_0_in_on_success
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: success_task
           script:
@@ -477,6 +500,7 @@ jobs:
   - name: exit_1_in_on_success
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: success_task
           script:
@@ -499,6 +523,7 @@ jobs:
   - name: exit_1_in_always
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: success_task
           script:
@@ -520,6 +545,7 @@ jobs:
   - name: exit_0_in_on_failure
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: failure_task
           script:
@@ -544,6 +570,7 @@ jobs:
   - name: reset_err_trap_multi_line
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: reset_err_trap_multi_line
           script: |
@@ -569,6 +596,7 @@ jobs:
   - name: reset_exit_trap_multi_line
     type: runSh
     steps:
+      - IN: trigger_tests
       - TASK:
           name: reset_exit_trap_multi_line
           script: |
