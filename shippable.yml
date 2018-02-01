@@ -381,3 +381,206 @@ jobs:
     always:
       script:
         - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - run multi-line scripts (success)
+  - name: multi_line_script_success
+    type: runSh
+    steps:
+      - TASK:
+          name: multi_line_script
+          script: |
+              echo "Checking OS"
+              uname -a
+              cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - run single line scripts. The script section will be executed in a single
+  ## line
+  - name: single_line_script
+    type: runSh
+    steps:
+      - TASK:
+          name: single_line_script
+          script: >
+              echo "Checking OS";
+              uname -a;
+              cat /etc/*release;
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - run multi-line scripts (failure)
+  - name: multi_line_script_failure
+    type: runSh
+    steps:
+      - TASK:
+          name: multi_line_script
+          script: |
+              echo "Checking OS"
+              foo
+              uname -a
+              cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - exit 0 in on_success (build success)
+  - name: exit_0_in_on_success
+    type: runSh
+    steps:
+      - TASK:
+          name: success_task
+          script:
+            - uname -a
+            - cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+        - exit 0
+        - echo "This will not be executed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This will not be executed"
+
+  ## Job description:
+  ## - exit 1 in on_success (build failure)
+  - name: exit_1_in_on_success
+    type: runSh
+    steps:
+      - TASK:
+          name: success_task
+          script:
+            - uname -a
+            - cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+        - exit 1
+        - echo "This will not be executed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This will not be executed"
+
+  ## Job description:
+  ## - exit 1 in always (build failure)
+  - name: exit_1_in_always
+    type: runSh
+    steps:
+      - TASK:
+          name: success_task
+          script:
+            - uname -a
+            - cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - exit 1
+        - echo "This will not be executed"
+
+  ## Job description:
+  ## - exit 0 in on_failure (build failure)
+  - name: exit_0_in_on_failure
+    type: runSh
+    steps:
+      - TASK:
+          name: failure_task
+          script:
+            - uname -a
+            - foo
+            - cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+        - exit 0
+        - echo "This will not be executed"
+    always:
+      script:
+        - echo "This will not be executed"
+
+  ## Job description:
+  ## - resetting ERR trap in a multi-line command will not stop on errors
+  ## (build success)
+  - name: reset_err_trap_multi_line
+    type: runSh
+    steps:
+      - TASK:
+          name: reset_err_trap_multi_line
+          script: |
+              echo "Checking OS"
+              uname -a
+              echo "Resetting ERR trap"
+              trap "" ERR
+              foo
+              cat /etc/*release
+    on_success:
+      script:
+        - echo "Task successfully completed"
+    on_failure:
+      script:
+        - echo "This should be executed if any step in TASK fails"
+    always:
+      script:
+        - echo "This should always be executed, regardless of job status"
+
+  ## Job description:
+  ## - resetting EXIT trap in a multi-line command and exiting with exit 0, will
+  ## result in build failure
+  - name: reset_exit_trap_multi_line
+    type: runSh
+    steps:
+      - TASK:
+          name: reset_exit_trap_multi_line
+          script: |
+              echo "Checking OS"
+              uname -a
+              echo "Resetting EXIT trap"
+              trap "" EXIT
+              exit 0
+              cat /etc/*release
+    on_success:
+      script:
+        - echo "This will not be executed"
+    on_failure:
+      script:
+        - echo "This will not be executed"
+    always:
+      script:
+        - echo "This will not be executed"
