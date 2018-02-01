@@ -2,10 +2,6 @@ resources:
   - name: global_state
     type: state
 
-  - name: test-azure-cli
-    type: cliConfig
-    integration: azure-test
-
 jobs:
 
   ####################################################################
@@ -349,7 +345,6 @@ jobs:
     runtime:
       container: false
     steps:
-      - IN: test-azure-cli
       - TASK:
           name: container_write_file
           runtime:
