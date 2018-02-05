@@ -1,12 +1,12 @@
 resources:
-  - name: global_state
+  - name: task_state
     type: state
     
 jobs:  
   - name: task_runner
     type: runSh
     steps:
-      - IN: global_state
+      - IN: task_state
         switch: off
       - TASK:
         - script: echo 'This is task in old format'
